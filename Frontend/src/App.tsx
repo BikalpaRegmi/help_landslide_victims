@@ -22,6 +22,7 @@ function App() {
     provider:null , signer:null , contract:null
   });
   const [account, setAccount] = useState<String>('Not connected>');
+  const [totalRaised, setTotalRaised] = useState<number>(0);
 
   const template = async() => {
     const contractAddress = "0x8B0D0d4D66168F26B2184874a25CB2e2FAE3b283"; //to reach to that blockchain
@@ -50,6 +51,13 @@ function App() {
       ) //creating a contract instance
       
       setState({ provider: provider, signer: signer, contract: contract });
+
+      const memos = await contract.retrieve();
+
+      if (memos) {
+        setTotalRaised(memos.length);
+      }
+
     } else {
       console.log("plz download metamask extension");
     }
@@ -66,8 +74,9 @@ function App() {
     <>
       {state.contract != null ? (
         <>
-          <div className="  h-[100vh]">
-            <div className="image_title bg-gradient-to-tr from-slate-50 to-slate-300 w-full mx-auto">
+          <div className="  min-h-[100vh]">
+            <div className="image_title  bg-gradient-to-tr from-slate-50 to-slate-300 w-full">
+            <p className='text-right pr-3 font-light'> total raised {totalRaised/1000} eth (${totalRaised/1000 * 2500})</p>
               <img
                 src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvs0TtaTIzS9uUJZFB3GYk0T9rwxRueNZ2Qw&s"
                 alt=""
@@ -77,18 +86,18 @@ function App() {
                 Help the landslide victims
               </h1>
             </div>
-            
+
             <Donate state={state} />
-            {/* <Memo state = {state}/> */}
+            <Memo state = {state}/>
           </div>
         </>
       ) : (
         "error providing contract"
       )}
-            <footer className='footer bg-green-900 text-white h-16 sticky top-[100%] p-3'>
-              {" "}
-              Connected to <b> {account} </b> 
-            </footer>
+      <footer className="footer bg-green-900 text-white h-16 sticky top-[100%] p-3">
+        {" "}
+        Connected to <b>{account}</b>
+      </footer>
     </>
   );
 }
